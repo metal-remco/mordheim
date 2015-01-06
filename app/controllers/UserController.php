@@ -28,13 +28,15 @@ class UserController extends \BaseController {
 		// }
 		
 		//$users = User::all();
-		$warbands = DB::table('users')->join('warband', 'users.id', '=', 'warband.user_id')->get();
-
+		
+		//Get all users
+		$users = DB::table('users')->leftJoin('warband', 'users.id', '=', 'warband.user_id')->get();
 
 		return Response::json(
 			array(
-				'users' => $warbands
-				)
+				'status' => 'success',
+				'users' => $users
+				), 200
 			);
 	}
 
@@ -64,12 +66,31 @@ class UserController extends \BaseController {
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  int  $id
+	 * @param  int  $name
 	 * @return Response
 	 */
-	public function show($id)
+	public function show($name)
 	{
-		//
+		//Gwt user by name
+		$user = DB::table('users')->join('warband', 'users.id', '=', 'warband.user_id')->where('username', '=', $name)->get();
+
+		//Check if user exist and has a warband, else get user without warband.
+		if(!$user)
+		{
+			$user = User::where('username', '=', $name);
+			
+			//check if user exist in database, if not 404 error
+			if($user->first() == null)
+			{
+				return Response::json(array('status' => 'error'), 404);
+			}
+
+			return Response::json(array('status' => 'success', 'user' => $user->first()), 200);
+		}
+		else
+		{
+			return Response::json(array('status' => 'success', 'user' => $user), 200);	
+		}
 	}
 
 

@@ -16,6 +16,10 @@ Route::get('/', function()
 	return View::make('hello');
 });
 
-#Route::get('dbmigrate', 'DbmigrateController@index');
 
-Route::resource('user', 'UserController');
+Route::group(array('prefix' => 'api/v1'), function()
+{
+	Route::resource('users', 'UserController');
+
+	Route::resource('user/{name}', 'UserController@show');
+});
