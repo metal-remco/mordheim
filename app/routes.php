@@ -17,3 +17,5 @@ Route::get('/', function()
 });
 
 #Route::get('dbmigrate', 'DbmigrateController@index');
+
+Route::resource('user', 'UserController');
