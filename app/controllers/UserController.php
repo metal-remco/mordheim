@@ -10,25 +10,25 @@ class UserController extends \BaseController {
 	public function index()
 	{
 		// $users = User::all();
-		
+
 		// foreach ($users as $user) {
 		// 	echo $user->warbands;
 		// }
-		
+
 		// $user = User::find(1);
 		// foreach ($user->warbands as $warband) {
 		// 	echo $warband->name;
 		// }
-		
+
 		// $warbands = Warband::all();
 
 		// foreach($warbands as $warband)
 		// {
 		// 	echo $warband->user->name;
 		// }
-		
+
 		//$users = User::all();
-		
+
 		//Get all users
 		$users = DB::table('users')->leftJoin('warband', 'users.id', '=', 'warband.user_id')->get();
 
@@ -78,7 +78,7 @@ class UserController extends \BaseController {
 		if(!$user)
 		{
 			$user = User::where('username', '=', $name);
-			
+
 			//check if user exist in database, if not 404 error
 			if($user->first() == null)
 			{
@@ -89,7 +89,7 @@ class UserController extends \BaseController {
 		}
 		else
 		{
-			return Response::json(array('status' => 'success', 'user' => $user), 200);	
+			return Response::json(array('status' => 'success', 'user' => $user), 200);
 		}
 	}
 
@@ -129,5 +129,25 @@ class UserController extends \BaseController {
 		//
 	}
 
+	public function getUserWarband($name)
+	{
+		$user = User::where('username', '=', $name);
+
+		if($user)
+		{
+			$warbands = Warband::where('user_id', '=', $user->first()->id);
+
+			if(!$warbands)
+			{
+				return Response::json(array('status' => 'error'), 404);
+			}
+		}
+		else
+		{
+			return Response::json(array('status' => 'error'), 404);
+		}
+
+		return Response::json(array('status' => 'succes', 'warbands' => $warbands->first()), 200);
+	}
 
 }
