@@ -19,7 +19,9 @@ Route::get('/', function()
 
 Route::group(array('prefix' => 'api/v1'), function()
 {
+	//User routes
 	Route::resource('users', 'UserController');
+	//Route::resource('users/{name}', 'UserController@show');
+	Route::resource('users.warbands', 'UserController@getUserWarband');
 
-	Route::resource('user/{name}', 'UserController@show');
 });
