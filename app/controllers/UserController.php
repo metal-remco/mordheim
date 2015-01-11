@@ -9,26 +9,6 @@ class UserController extends \BaseController {
 	 */
 	public function index()
 	{
-		// $users = User::all();
-
-		// foreach ($users as $user) {
-		// 	echo $user->warbands;
-		// }
-
-		// $user = User::find(1);
-		// foreach ($user->warbands as $warband) {
-		// 	echo $warband->name;
-		// }
-
-		// $warbands = Warband::all();
-
-		// foreach($warbands as $warband)
-		// {
-		// 	echo $warband->user->name;
-		// }
-
-		//$users = User::all();
-
 		//Get all users
 		$users = DB::table('users')->leftJoin('warband', 'users.id', '=', 'warband.user_id')->get();
 
@@ -66,12 +46,12 @@ class UserController extends \BaseController {
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  int  $name
+	 * @param  string  $name
 	 * @return Response
 	 */
 	public function show($name)
 	{
-		//Gwt user by name
+		//Get user by name
 		$user = DB::table('users')->join('warband', 'users.id', '=', 'warband.user_id')->where('username', '=', $name)->get();
 
 		//Check if user exist and has a warband, else get user without warband.
@@ -129,14 +109,22 @@ class UserController extends \BaseController {
 		//
 	}
 
+	/**
+	* Get users warbands
+	*
+	* @param  string  $name
+	* @return Response
+	*/
 	public function getUserWarband($name)
 	{
 		$user = User::where('username', '=', $name);
 
+		//Check if user exist in database
 		if($user)
 		{
 			$warbands = Warband::where('user_id', '=', $user->first()->id);
 
+			//Check if user has any warbands
 			if(!$warbands)
 			{
 				return Response::json(array('status' => 'error'), 404);
