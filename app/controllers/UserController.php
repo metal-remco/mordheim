@@ -10,11 +10,13 @@ class UserController extends \BaseController {
 	public function index()
 	{
 		//Get all users
-		$users = DB::table('users')->leftJoin('warband', 'users.id', '=', 'warband.user_id')->get();
+		$users = DB::table('users')
+			->leftJoin('warband', 'users.id', '=', 'warband.user_id')
+			->select('users.id', 'users.name AS username', 'warband.id AS warband_id', 'warband.name AS warbandname', 'inventory_id', 'typewarband_id', 'rating')
+			->get();
 
 		return Response::json(
 			array(
-				'status' => 'success',
 				'users' => $users
 				), 200
 			);
@@ -52,24 +54,27 @@ class UserController extends \BaseController {
 	public function show($name)
 	{
 		//Get user by name
-		$user = DB::table('users')->join('warband', 'users.id', '=', 'warband.user_id')->where('username', '=', $name)->get();
+		$user = DB::table('users')
+			->join('warband', 'users.id', '=', 'warband.user_id')
+			->where('users.name', '=', $name)
+			->get();
 
 		//Check if user exist and has a warband, else get user without warband.
 		if(!$user)
 		{
-			$user = User::where('username', '=', $name);
+			$user = User::where('name', '=', $name);
 
 			//check if user exist in database, if not 404 error
 			if($user->first() == null)
 			{
-				return Response::json(array('status' => 'error'), 404);
+				return Response::json(404);
 			}
 
-			return Response::json(array('status' => 'success', 'user' => $user->first()), 200);
+			return Response::json(array('user' => $user->first()), 200);
 		}
 		else
 		{
-			return Response::json(array('status' => 'success', 'user' => $user), 200);
+			return Response::json(array('user' => $user), 200);
 		}
 	}
 
@@ -117,7 +122,7 @@ class UserController extends \BaseController {
 	*/
 	public function getUserWarband($name)
 	{
-		$user = User::where('username', '=', $name);
+		$user = User::where('name', '=', $name);
 
 		//Check if user exist in database
 		if($user)
@@ -127,15 +132,15 @@ class UserController extends \BaseController {
 			//Check if user has any warbands
 			if(!$warbands)
 			{
-				return Response::json(array('status' => 'error'), 404);
+				return Response::json(404);
 			}
 		}
 		else
 		{
-			return Response::json(array('status' => 'error'), 404);
+			return Response::json(404);
 		}
 
-		return Response::json(array('status' => 'succes', 'warbands' => $warbands->first()), 200);
+		return Response::json(array('warbands' => $warbands->first()), 200);
 	}
 
 }

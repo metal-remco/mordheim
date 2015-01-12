@@ -13,7 +13,7 @@
 
 Route::get('/', function()
 {
-	return View::make('hello');
+	return View::make('index');
 });
 
 
@@ -24,4 +24,10 @@ Route::group(array('prefix' => 'api/v1'), function()
 	//Route::resource('users/{name}', 'UserController@show');
 	Route::resource('users.warbands', 'UserController@getUserWarband');
 
+});
+
+
+//Catch all routess for angular
+App::missing(function($exception) {
+	return View::make('index');
 });
