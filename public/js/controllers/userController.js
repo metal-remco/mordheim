@@ -1,6 +1,6 @@
-angular.module('mainCtrl', [])
+angular.module('userController', [])
 
-.controller('mainCtrl', function($scope, $http, User)
+.controller('userController', function($scope, $http, User)
 {
   $scope.userData = {};
 
